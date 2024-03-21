@@ -2,7 +2,6 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 
@@ -13,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
+    private static final SessionFactory sessionFactory = Util.getSessionFactory();
 
     public UserDaoHibernateImpl() {
     }
@@ -26,7 +26,6 @@ public class UserDaoHibernateImpl implements UserDao {
         } catch (SQLException s) {
             s.printStackTrace();
         }
-
     }
 
     @Override
@@ -41,63 +40,46 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-        try (SessionFactory sessionFactory = Util.getSessionFactory()) {
-            Session session = null;
+        Session session = null;
 
-            try {
-                session = sessionFactory.getCurrentSession();
-                User user = new User(name, lastName, age);
-                session.beginTransaction();
-                session.save(user);
-                session.getTransaction().commit();
-            } finally {
-                session.close();
-            }
-
-        } catch (HibernateException h) {
-            h.printStackTrace();
+        try {
+            session = sessionFactory.getCurrentSession();
+            User user = new User(name, lastName, age);
+            session.beginTransaction();
+            session.save(user);
+            session.getTransaction().commit();
+        } finally {
+            session.close();
         }
     }
 
     @Override
     public void removeUserById(long id) {
-        try (SessionFactory sessionFactory = Util.getSessionFactory()) {
-            Session session = null;
+        Session session = null;
 
-            try {
-                session = sessionFactory.getCurrentSession();
-                session.beginTransaction();
-                User user = session.get(User.class, id);
-                session.delete(user);
-                session.getTransaction().commit();
-            } finally {
-                session.close();
-            }
-
-        } catch (HibernateException h) {
-            h.printStackTrace();
+        try {
+            session = sessionFactory.getCurrentSession();
+            session.beginTransaction();
+            User user = session.get(User.class, id);
+            session.delete(user);
+            session.getTransaction().commit();
+        } finally {
+            session.close();
         }
     }
 
     @Override
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
+        Session session = null;
 
-        try (SessionFactory sessionFactory = Util.getSessionFactory()) {
-            Session session = null;
-
-            try {
-                session = sessionFactory.getCurrentSession();
-                session.beginTransaction();
-                userList = session.createQuery("from User", User.class).getResultList();
-                session.getTransaction().commit();
-            } finally {
-                session.close();
-                sessionFactory.close();
-            }
-
-        } catch (HibernateException h) {
-            h.printStackTrace();
+        try {
+            session = sessionFactory.getCurrentSession();
+            session.beginTransaction();
+            userList = session.createQuery("from User", User.class).getResultList();
+            session.getTransaction().commit();
+        } finally {
+            session.close();
         }
 
         return userList;
@@ -105,21 +87,15 @@ public class UserDaoHibernateImpl implements UserDao {
 
     @Override
     public void cleanUsersTable() {
-        try (SessionFactory sessionFactory = Util.getSessionFactory()) {
-            Session session = null;
+        Session session = null;
 
-            try {
-                session = sessionFactory.getCurrentSession();
-                session.beginTransaction();
-                session.createQuery("DELETE FROM User").executeUpdate();
-                session.getTransaction().commit();
-            } finally {
-                session.close();
-                sessionFactory.close();
-            }
-
-        } catch (HibernateException h) {
-            h.printStackTrace();
+        try {
+            session = sessionFactory.getCurrentSession();
+            session.beginTransaction();
+            session.createQuery("DELETE FROM User").executeUpdate();
+            session.getTransaction().commit();
+        } finally {
+            session.close();
         }
     }
 }

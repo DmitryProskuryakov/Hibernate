@@ -58,8 +58,8 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public List<User> getAllUsers() {
-        List<User> users = new ArrayList<>();                                        // Не стал здесь использовать PreparedStatement,
-        try (Connection connection = Util.getConnection()) {                         // так как выбираются все Users.
+        List<User> users = new ArrayList<>();
+        try (Connection connection = Util.getConnection()) {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM Users");
 
@@ -82,9 +82,9 @@ public class UserDaoJDBCImpl implements UserDao {
     public void cleanUsersTable() {
         try (Connection connection = Util.getConnection()) {
             Statement statement = connection.createStatement();
-            statement.executeUpdate("DELETE FROM Users");    // Здесь тоже не использовал PreparedStatement.
+            statement.executeUpdate("DELETE FROM Users");
         } catch (
-                SQLException s) {                               // Наврено я не прав и все-таки в этих случаях тоже надо его использовать?
+                SQLException s) {
             s.printStackTrace();
         }
     }

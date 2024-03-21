@@ -17,7 +17,7 @@ public class Main {
         userService.saveUser("Oleg", "Petrov", (byte) 22);
         System.out.println("User с именем Oleg добавлен в базу данных");
 
-        userService.getAllUsers().stream().forEach(el -> System.out.println(el.toString()));
+        userService.getAllUsers().forEach(el -> System.out.println(el.toString()));
         userService.cleanUsersTable();
         userService.dropUsersTable();
     }
